@@ -1,0 +1,12 @@
+bin/
+obj/
+.cache/
+
+*.o
+*.dep
+*.d
+*.so
+*.a
+
+compile_commands.json
+
