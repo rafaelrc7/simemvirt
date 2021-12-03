@@ -9,4 +9,5 @@ obj/
 *.a
 
 compile_commands.json
+sim-virtual
 
