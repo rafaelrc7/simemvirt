@@ -10,4 +10,5 @@ obj/
 
 compile_commands.json
 sim-virtual
+*.log
 
