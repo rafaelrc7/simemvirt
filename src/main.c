@@ -1,11 +1,33 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-int argtoui(const char *arg, unsigned int *num);
+#define ARCH (32)
+#define KB (1024)
+#define MB (1024 * KB)
+
+typedef struct memory_frame Memory_frame;
+typedef struct memory_page Memory_page;
+
+struct memory_frame {
+	unsigned long int R;
+	unsigned long int T;
+	unsigned char M;
+};
+
+struct memory_page {
+	unsigned long int addr;
+	unsigned char is_loaded;
+};
+
+int argtoul(const char *arg, unsigned long int *num);
 
 int main(int argc, char **argv)
 {
-	unsigned int page_size, mem_size;
+	Memory_page *page_table;
+	Memory_frame *physical_mem;
+
+	unsigned long int page_size, mem_size, num_mem_frames, num_pages, page_id_offset;
 	const char *alg_name;
 	const char *file_name;
 
@@ -18,28 +40,51 @@ int main(int argc, char **argv)
 
 	alg_name = argv[1];
 	file_name = argv[2];
-	if (!argtoui(argv[3], &page_size)) {
+	if (!argtoul(argv[3], &page_size)) {
 		fprintf(stderr, "Third argument is invalid.\n");
 		exit(EXIT_FAILURE);
 	}
+	page_size *= KB;
 
-	if (!argtoui(argv[4], &mem_size)) {
+	if (!argtoul(argv[4], &mem_size)) {
 		fprintf(stderr, "Fourth argument is invalid.\n");
 		exit(EXIT_FAILURE);
 	}
+	mem_size *= MB;
 
+	num_mem_frames = mem_size / page_size;
+
+	physical_mem = (Memory_frame *)calloc(num_mem_frames, sizeof(Memory_frame));
+	if (!physical_mem) {
+		fprintf(stderr, "calloc() failed.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	page_id_offset = log2(page_size);
+	num_pages = pow(2, ARCH-page_id_offset);
+
+	page_table = (Memory_page *)calloc(num_pages, sizeof(Memory_page));
+	if (!page_table) {
+		fprintf(stderr, "calloc() failed.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	printf("num_frames: %lu : num_pages : %lu\n", num_mem_frames, num_pages);
+
+	free(page_table);
+	free(physical_mem);
 
 	return 0;
 }
 
-int argtoui(const char *arg, unsigned int *num)
+int argtoul(const char *arg, unsigned long int *num)
 {
 	char *endptr;
 
 	if (*arg == 0)
 		return 0;
 
-	*num = (unsigned int)strtoul(arg, &endptr, 10);
+	*num = strtoul(arg, &endptr, 10);
 	if (*endptr != 0)
 		return 0;
 

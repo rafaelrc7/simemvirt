@@ -8,7 +8,7 @@ sim-virtual: main.o
 
 CC = gcc
 CFLAGS  += -g -O0 -Wall -Wextra -pedantic
-LDFLAGS +=
+LDFLAGS += -lm
 
 SRCEXT = c
 OBJEXT = o
