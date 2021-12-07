@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,17 +9,28 @@
 
 typedef struct memory_frame Memory_frame;
 typedef struct memory_page Memory_page;
+typedef struct free_frame_node Free_frame;
 
 struct memory_frame {
-	unsigned long int R;
 	unsigned long int T;
+	uint32_t R;
 	unsigned char M;
 };
 
 struct memory_page {
-	unsigned long int addr;
+	uint32_t addr;
 	unsigned char is_loaded;
 };
+
+struct free_frame_node {
+	uint32_t addr;
+	Free_frame *next;
+};
+
+Free_frame *free_frame_stack_create(unsigned long int num_mem_frames, unsigned long int page_size);
+Free_frame *free_frame_stack_push(Free_frame *stack, uint32_t addr);
+Free_frame *free_frame_stack_pop(Free_frame *stack, uint32_t *addr);
+void free_frame_stack_destroy(Free_frame *stack);
 
 int argtoul(const char *arg, unsigned long int *num);
 
@@ -26,6 +38,7 @@ int main(int argc, char **argv)
 {
 	Memory_page *page_table;
 	Memory_frame *physical_mem;
+	Free_frame *free_frames_stack;
 
 	unsigned long int page_size, mem_size, num_mem_frames, num_pages, page_id_offset;
 	const char *alg_name;
@@ -69,8 +82,10 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	printf("num_frames: %lu : num_pages : %lu\n", num_mem_frames, num_pages);
+	free_frames_stack = free_frame_stack_create(num_mem_frames, page_size);
 
+
+	free_frame_stack_destroy(free_frames_stack);
 	free(page_table);
 	free(physical_mem);
 
@@ -89,5 +104,50 @@ int argtoul(const char *arg, unsigned long int *num)
 		return 0;
 
 	return 1;
+}
+
+Free_frame *free_frame_stack_create(unsigned long int num_mem_frames, unsigned long int page_size)
+{
+	unsigned long int i;
+	Free_frame *stack = NULL;
+
+	for (i = 0; i < num_mem_frames; ++i) {
+		stack = free_frame_stack_push(stack, i * page_size);
+		printf("ADDR: %lx\n", i*page_size);
+	}
+
+	return stack;
+}
+
+Free_frame *free_frame_stack_push(Free_frame *stack, uint32_t addr)
+{
+	Free_frame *node = (Free_frame *)malloc(sizeof(Free_frame));
+	if (!node) {
+		fprintf(stderr, "malloc() fail.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	node->addr = addr;
+	node->next = stack;
+
+	return node;
+}
+
+Free_frame *free_frame_stack_pop(Free_frame *stack, uint32_t *addr)
+{
+	Free_frame *next = stack->next;
+
+	if (addr)
+		*addr = stack->addr;
+
+	free(stack);
+
+	return next;
+}
+
+void free_frame_stack_destroy(Free_frame *stack)
+{
+	while(stack)
+		stack = free_frame_stack_pop(stack, NULL);
 }
 
