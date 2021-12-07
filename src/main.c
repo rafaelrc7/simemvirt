@@ -12,25 +12,29 @@ typedef struct memory_page Memory_page;
 typedef struct free_frame_node Free_frame;
 
 struct memory_frame {
-	unsigned long int T;
-	uint32_t R;
-	unsigned char M;
+	unsigned long int T;	/* ultimo acesso */
+	uint32_t R;				/* addr da página referenciada */
+	unsigned char P;		/* 1 se ter página referenciada */
+	unsigned char M;		/* 1 se página estiver modificada */
 };
 
 struct memory_page {
-	uint32_t addr;
-	unsigned char is_loaded;
+	uint32_t addr;				/* endereço na memória física */
+	unsigned char is_loaded;	/* 1 se estiver na memória física */
 };
 
 struct free_frame_node {
-	uint32_t addr;
-	Free_frame *next;
+	uint32_t addr;	 	/* endereço de frame livre na memória física */
+	Free_frame *next;	/* próximo nó */
 };
 
 Free_frame *free_frame_stack_create(unsigned long int num_mem_frames, unsigned long int page_size);
 Free_frame *free_frame_stack_push(Free_frame *stack, uint32_t addr);
 Free_frame *free_frame_stack_pop(Free_frame *stack, uint32_t *addr);
 void free_frame_stack_destroy(Free_frame *stack);
+
+void swapin(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr);
+void swapout(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr);
 
 int argtoul(const char *arg, unsigned long int *num);
 
@@ -149,5 +153,36 @@ void free_frame_stack_destroy(Free_frame *stack)
 {
 	while(stack)
 		stack = free_frame_stack_pop(stack, NULL);
+}
+
+void swapin(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr)
+{
+	uint32_t mem_addr;
+
+	if (!*free_stack)
+		return;
+
+	*free_stack = free_frame_stack_pop(*free_stack, &mem_addr);
+	page_table[page_addr].is_loaded = 1;
+	page_table[page_addr].addr = mem_addr;
+
+	physical_mem[mem_addr].M = 0;
+	physical_mem[mem_addr].P = 1;
+	physical_mem[mem_addr].T = 0;
+	physical_mem[mem_addr].R = page_addr;
+
+}
+
+void swapout(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr)
+{
+	uint32_t mem_addr = page_table[page_addr].addr;
+	page_table[page_addr].is_loaded = 0;
+
+	physical_mem[mem_addr].P = 0;
+	if (physical_mem[mem_addr].M) {
+		// TODO: escrita
+	}
+
+	*free_stack = free_frame_stack_push(*free_stack, mem_addr);
 }
 
