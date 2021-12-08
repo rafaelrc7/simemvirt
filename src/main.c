@@ -17,6 +17,7 @@ int main(int argc, char **argv)
 	Memory_frame *physical_mem;
 	Free_frame *free_frames_stack;
 
+	FILE *handle;
 	unsigned long int page_size, mem_size, num_mem_frames, num_pages, page_id_offset;
 	const char *alg_name;
 	const char *file_name;
@@ -46,7 +47,7 @@ int main(int argc, char **argv)
 
 	physical_mem = (Memory_frame *)calloc(num_mem_frames, sizeof(Memory_frame));
 	if (!physical_mem) {
-		fprintf(stderr, "calloc() failed.\n");
+		perror("calloc()");
 		exit(EXIT_FAILURE);
 	}
 
@@ -55,12 +56,33 @@ int main(int argc, char **argv)
 
 	page_table = (Memory_page *)calloc(num_pages, sizeof(Memory_page));
 	if (!page_table) {
-		fprintf(stderr, "calloc() failed.\n");
+		perror("calloc()");
 		exit(EXIT_FAILURE);
 	}
 
 	free_frames_stack = free_frame_stack_create(num_mem_frames, page_size);
 
+	if (!(handle = fopen(file_name, "r"))) {
+		perror("fopen()");
+		exit(EXIT_FAILURE);
+	}
+
+	while (!feof(handle)) {
+		uint32_t addr;
+		char op;
+
+		if (fscanf(handle, " %x %c", &addr, &op) == 2) {
+			if (op == 'R') {
+
+			} else if (op == 'W') {
+
+			} else {
+				fprintf(stderr, "ERROR: Invalid operation '%c' inside log file.\n", op);
+				fclose(handle);
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
 
 	free_frame_stack_destroy(free_frames_stack);
 	free(page_table);
