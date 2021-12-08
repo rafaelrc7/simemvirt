@@ -9,16 +9,24 @@
 #define KB (1024)
 #define MB (1024 * KB)
 
-int argtoul(const char *arg, unsigned long int *num);
+static unsigned int writes = 0;
+static unsigned int page_faults = 0;
+static unsigned long int T = 0;
+
+static inline uint32_t log2phy(uint32_t addr, unsigned long int page_id_offset);
+static void pagwrite(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack);
+static void pagread(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack);
+
+static int argtoul(const char *arg, unsigned long int *num);
 
 int main(int argc, char **argv)
 {
 	Memory_page *page_table;
 	Memory_frame *physical_mem;
 	Free_frame *free_frames_stack;
+	unsigned long int page_size, mem_size, num_mem_frames, num_pages, page_id_offset;
 
 	FILE *handle;
-	unsigned long int page_size, mem_size, num_mem_frames, num_pages, page_id_offset;
 	const char *alg_name;
 	const char *file_name;
 
@@ -72,15 +80,16 @@ int main(int argc, char **argv)
 		char op;
 
 		if (fscanf(handle, " %x %c", &addr, &op) == 2) {
-			if (op == 'R') {
-
-			} else if (op == 'W') {
-
-			} else {
+			uint32_t pag = log2phy(addr, page_id_offset);
+			if (op == 'R') pagread(pag, page_table, physical_mem, free_frames_stack);
+			else if (op == 'W') pagwrite(pag, page_table, physical_mem, free_frames_stack);
+			else {
 				fprintf(stderr, "ERROR: Invalid operation '%c' inside log file.\n", op);
 				fclose(handle);
 				exit(EXIT_FAILURE);
 			}
+
+			++T;
 		}
 	}
 
@@ -91,7 +100,35 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-int argtoul(const char *arg, unsigned long int *num)
+static inline uint32_t log2phy(uint32_t addr, unsigned long int page_id_offset)
+{
+	return addr >> page_id_offset;
+}
+
+static void pagget(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack)
+{
+	if (!page_table[page].is_loaded) {
+		if (!free_frames_stack) {
+			// TODO: swapout
+		}
+		swapin(physical_mem, &free_frames_stack, page_table, page);
+	}
+
+	physical_mem[page_table[page].addr].T = T;
+}
+
+static void pagwrite(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack)
+{
+	pagget(page, page_table, physical_mem, free_frames_stack);
+	physical_mem[page_table[page].addr].M = 1;
+}
+
+static void pagread(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack)
+{
+	pagget(page, page_table, physical_mem, free_frames_stack);
+}
+
+static int argtoul(const char *arg, unsigned long int *num)
 {
 	char *endptr;
 
