@@ -14,15 +14,13 @@
 enum ALGORITHM { NRU = 0, FIFO2, LFU };
 
 static enum ALGORITHM curr_alg;
-static uint32_t (*alg[NUM_ALGS]) (Memory_frame *physical_mem, unsigned long int num_mem_frames);
+static uint32_t (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, Free_frame **free_frame_stack);
 
 static unsigned int writes = 0;
 static unsigned int page_faults = 0;
 static unsigned long int T = 0;
 
-static inline uint32_t log2phy(uint32_t addr, unsigned long int page_id_offset);
-static void pagwrite(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack, unsigned long int mem_size);
-static void pagread(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack, unsigned long int mem_size);
+static inline uint32_t get_page_id(uint32_t addr, unsigned long int page_id_offset);
 
 static int argtoul(const char *arg, unsigned long int *num);
 
@@ -98,10 +96,13 @@ int main(int argc, char **argv)
 		char op;
 
 		if (fscanf(handle, " %x %c", &addr, &op) == 2) {
-			uint32_t pag = log2phy(addr, page_id_offset);
-			if (op == 'R') pagread(pag, page_table, physical_mem, free_frames_stack, num_mem_frames);
-			else if (op == 'W') pagwrite(pag, page_table, physical_mem, free_frames_stack, num_mem_frames);
-			else {
+			uint32_t page_id = get_page_id(addr, page_id_offset);
+			if (op == 'R') {
+				paging_algo[curr_alg](page_id, page_table, physical_mem, &free_frames_stack);
+			} else if (op == 'W') {
+				paging_algo[curr_alg](page_id, page_table, physical_mem, &free_frames_stack);
+				physical_mem[page_table[page_id].addr].M = 1;
+			} else {
 				fprintf(stderr, "ERROR: Invalid operation '%c' inside log file.\n", op);
 				fclose(handle);
 				exit(EXIT_FAILURE);
@@ -118,36 +119,9 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-static inline uint32_t log2phy(uint32_t addr, unsigned long int page_id_offset)
+static inline uint32_t get_page_id(uint32_t addr, unsigned long int page_id_offset)
 {
 	return addr >> page_id_offset;
-}
-
-static void pagget(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack, unsigned long int mem_size)
-{
-	if (!page_table[page].is_loaded) {
-		++page_faults;
-		if (!free_frames_stack) {
-			uint32_t so_page = alg[curr_alg](physical_mem, mem_size);
-			if (physical_mem[page_table[so_page].addr].M)
-				++writes;
-			swapout(physical_mem, &free_frames_stack, page_table, so_page);
-		}
-		swapin(physical_mem, &free_frames_stack, page_table, page);
-	}
-
-	physical_mem[page_table[page].addr].T = T;
-}
-
-static void pagwrite(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack, unsigned long int mem_size)
-{
-	pagget(page, page_table, physical_mem, free_frames_stack, mem_size);
-	physical_mem[page_table[page].addr].M = 1;
-}
-
-static void pagread(uint32_t page, Memory_page *page_table, Memory_frame *physical_mem, Free_frame *free_frames_stack, unsigned long int mem_size)
-{
-	pagget(page, page_table, physical_mem, free_frames_stack, mem_size);
 }
 
 static int argtoul(const char *arg, unsigned long int *num)

@@ -2,6 +2,9 @@
 
 #include "mem-simu.h"
 
+static unsigned int writes = 0;
+static unsigned int page_faults = 0;
+
 void swapin(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr)
 {
 	uint32_t mem_addr;
@@ -18,6 +21,7 @@ void swapin(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *pa
 	physical_mem[mem_addr].T = 0;
 	physical_mem[mem_addr].R = page_addr;
 
+	++page_faults;
 }
 
 void swapout(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr)
@@ -27,9 +31,18 @@ void swapout(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *p
 
 	physical_mem[mem_addr].P = 0;
 	if (physical_mem[mem_addr].M) {
-		// TODO: escrita
+		++writes;
 	}
 
 	*free_stack = free_frame_stack_push(*free_stack, mem_addr);
+
+}
+
+unsigned int get_writes() {
+	return writes;
+}
+
+unsigned int get_page_faults() {
+	return page_faults;
 }
 

@@ -13,6 +13,7 @@ struct memory_frame {
 	uint32_t R;				/* addr da página referenciada */
 	unsigned char P;		/* 1 se ter página referenciada */
 	unsigned char M;		/* 1 se página estiver modificada */
+	unsigned char fifo_r;	/* bit para o algoritimo fifo de 2a chance */
 };
 
 struct memory_page {
@@ -22,6 +23,9 @@ struct memory_page {
 
 void swapin(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr);
 void swapout(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *page_table, uint32_t page_addr);
+
+unsigned int get_writes();
+unsigned int get_page_faults();
 
 #endif
 
