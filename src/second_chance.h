@@ -1,4 +1,8 @@
+#ifndef SECOND_CHANCE
+#define SECOND_CHANCE
 
+#include "mem-simu.h"
 
-void fifo_second_chance(int stacksize, Free_frame* stack, int num_mem_frames, Memory_frame * physical_memory,
-Memory_page * page_table, unsigned long int num_page);
+uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, Free_frame **free_frame_stack);
+
+#endif

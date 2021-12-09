@@ -5,61 +5,36 @@
 #include "frame_stack.h"
 #include "mem-simu.h"
 #include "frame_stack.h"
+#include "linked-list.h"
 
+static List *fifo;
 
-void fifo_second_chance(int stacksize, Free_frame* stack, int num_mem_frames, Memory_frame * physical_memory,
-Memory_page * page_table, unsigned long int num_page)
+uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, Free_frame **free_frame_stack)
 {
-    unsigned char *R_bit;
-    unsigned int victim_frame = 0;
-
-    R_bit = (unsigned char*) calloc(num_mem_frames, sizeof(unsigned char));
-    // Cria os bits de referência
-
-    if (!R_bit)
-    {
-        perror("calloc()");
-        exit(EXIT_FAILURE);
-    } 
-    for (int i = 0; i < num_mem_frames; i++) 
-        R_bit[i] = 0; //Setta todos os bits de referência para 0
-
-    for (int i = 0; i < num_page; i++)
-    {
-        if (!page_in_memory(num_mem_frames, physical_memory, page_table[i].addr, R_bit, i))
-        {
-            for (int j = victim_frame; j < num_mem_frames + victim_frame; j++)
-            {
-                if (R_bit[j])
-                {
-                    R_bit[j] = 0;
-                }
-                else
-                {
-                    //realiza o swapin
-                    victim_frame = ++j % num_mem_frames;  //Se for > que o número de frames, cicla
-                    break;
-                }
-            }
-        }
+    if (!fifo){
+        fifo = llist_create();
+        // Add cada elemento presente na memória física, em ordem
     }
 
-}
-
-int page_in_memory(int num_mem_frames, Memory_frame * physical_memory, uint32_t addr, unsigned char *R_bit, int frame_bit)
-//Returns 0 or 1 based on wether the page is already in a memory frame
-{
-    for (int i = 0; i < num_mem_frames; i++)
+    if (page_table[page_id].is_loaded) //Página está na lista e carregada
     {
-        if (!physical_memory[i].R) //Se a página não estiver referenciando ninguém, podemos retornar zero, pois o programa verifica em ordem
-        {
-            return 0;
-        }
-
-        if (physical_memory[i].R == addr)
-        {
-            R_bit[frame_bit] = 1; //Seta o bit de referência como 1
-            return 1;
+        uint32_t mem_addr = page_table[page_id].addr;
+        physical_mem[mem_addr].R = 1;
+    }
+    else //Endereço deve ser adicionado
+    {
+        Node * node = fifo->head;
+        uint32_t tempAddr;
+        while(1) {
+            if (physical_mem[node->val].R){
+                //O bit é zerado e o elemento é colocado no começo da lista
+                physical_mem[node->val].R = 0;
+                tempAddr = llist_remove_head(fifo);
+                llist_add_tail(fifo, tempAddr);
+            } else {
+                //realiza o swapout e o swapin
+                //return ou break.
+            }
         }
     }
 }
