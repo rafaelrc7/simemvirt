@@ -97,11 +97,13 @@ int main(int argc, char **argv)
 
 		if (fscanf(handle, " %x %c", &addr, &op) == 2) {
 			uint32_t page_id = get_page_id(addr, page_id_offset);
-			if (op == 'R') {
+			if (op == 'R' || op == 'W') {
 				paging_algo[curr_alg](page_id, page_table, physical_mem, &free_frames_stack);
-			} else if (op == 'W') {
-				paging_algo[curr_alg](page_id, page_table, physical_mem, &free_frames_stack);
-				physical_mem[page_table[page_id].addr].M = 1;
+				physical_mem[page_table[page_id].addr].T = T;
+
+				if (op == 'W') {
+					physical_mem[page_table[page_id].addr].M = 1;
+				}
 			} else {
 				fprintf(stderr, "ERROR: Invalid operation '%c' inside log file.\n", op);
 				fclose(handle);
