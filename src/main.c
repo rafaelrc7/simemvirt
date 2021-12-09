@@ -16,9 +16,7 @@ enum ALGORITHM { NRU = 0, FIFO2, LFU };
 static enum ALGORITHM curr_alg;
 static uint32_t (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, Free_frame **free_frame_stack);
 
-static unsigned int writes = 0;
-static unsigned int page_faults = 0;
-static unsigned long int T = 0;
+static unsigned long int time = 0;
 
 static inline uint32_t get_page_id(uint32_t addr, unsigned long int page_id_offset);
 
@@ -99,7 +97,7 @@ int main(int argc, char **argv)
 			uint32_t page_id = get_page_id(addr, page_id_offset);
 			if (op == 'R' || op == 'W') {
 				paging_algo[curr_alg](page_id, page_table, physical_mem, &free_frames_stack);
-				physical_mem[page_table[page_id].addr].T = T;
+				physical_mem[page_table[page_id].addr].T = time;
 
 				if (op == 'W') {
 					physical_mem[page_table[page_id].addr].M = 1;
@@ -110,7 +108,7 @@ int main(int argc, char **argv)
 				exit(EXIT_FAILURE);
 			}
 
-			++T;
+			++time;
 		}
 	}
 

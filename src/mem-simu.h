@@ -10,10 +10,9 @@ typedef struct memory_page Memory_page;
 
 struct memory_frame {
 	unsigned long int T;	/* ultimo acesso */
-	uint32_t R;				/* addr da página referenciada */
+	unsigned char R;		/* R bit */
+	unsigned char M;		/* Modified bit */
 	unsigned char P;		/* 1 se ter página referenciada */
-	unsigned char M;		/* 1 se página estiver modificada */
-	unsigned char fifo_r;	/* bit para o algoritimo fifo de 2a chance */
 };
 
 struct memory_page {
