@@ -12,9 +12,9 @@ uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 	uint32_t pag;
 	int i = 0;
 	if(!page_table[page_id].is_loaded){
-		if(!*free_frame_stack){ //stack ainda tem espaço
+		if(*free_frame_stack){ //stack ainda tem espaço
 			swapin(physical_mem, free_frame_stack, page_table, page_id); //carrega
-			physical_mem[i].R ++;
+			physical_mem[i].A ++;
 			//pag = physical_mem[c1_addr].page_id;
 		}
 		else{
@@ -23,14 +23,14 @@ uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 			 int id_temp = 0;
 			for (i = 0; i < num_mem_frames; ++i){
 
-				if(page_table[i].is_loaded && (physical_mem[i].R < menor)){//frame esta carregado e M < menor
-					menor = (int) physical_mem[i].R;
+				if(page_table[i].is_loaded && (physical_mem[i].A < menor)){//frame esta carregado e M < menor
+					menor = (int) physical_mem[i].A;
 					id_temp = i;
 				}
 			}
 			//encontra o frame, e descarrega(swapout)
 			swapout(physical_mem, free_frame_stack, page_table, id_temp);
-			physical_mem[id_temp].R = 0;
+			physical_mem[id_temp].A = 0;
 
 			//carrega o proximo por cima (swapin)
 			swapin(physical_mem, free_frame_stack, page_table, page_id);
@@ -39,7 +39,7 @@ uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 	}
 	else{
 		//pag = physical_mem[c1_addr].page_id;
-		physical_mem[i].R ++; //apenas adiciona na frequencia
+		physical_mem[i].A ++; //apenas adiciona na frequencia
 	}
 
 
