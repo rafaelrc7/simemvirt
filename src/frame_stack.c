@@ -13,7 +13,7 @@ Free_frame *free_frame_stack_create(unsigned long int num_mem_frames, unsigned l
 	Free_frame *stack = NULL;
 
 	for (i = 0; i < num_mem_frames; ++i)
-		stack = free_frame_stack_push(stack, i * page_size);
+		stack = free_frame_stack_push(stack, i);
 
 	return stack;
 }
