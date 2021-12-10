@@ -9,31 +9,36 @@
 
 static List *fifo;
 
-uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, Free_frame **free_frame_stack)
+uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack)
 {
     if (!fifo){
         fifo = llist_create();
-        // Add cada elemento presente na memória física, em ordem
     }
 
-    if (page_table[page_id].is_loaded) //Página está na lista e carregada
+    if (*free_frame_stack) //Memória ainda não está cheia
+    {
+        llist_add_tail(fifo, page_id);
+        swapin(physical_mem, *free_frame_stack, page_table, page_id);
+        return page_id;
+    } else if (page_table[page_id].is_loaded) //Página está na lista e carregada
     {
         uint32_t mem_addr = page_table[page_id].addr;
         physical_mem[mem_addr].R = 1;
-    }
-    else //Endereço deve ser adicionado
+        return page_id;
+    } else //Endereço deve ser adicionado à memória que está cheia
     {
-        Node * node = fifo->head;
         uint32_t tempAddr;
+        Node * node = fifo->head; // Pega o primeiro elemento da fila
         while(1) {
-            if (physical_mem[node->val].R){
-                //O bit é zerado e o elemento é colocado no começo da lista
-                physical_mem[node->val].R = 0;
-                tempAddr = llist_remove_head(fifo);
-                llist_add_tail(fifo, tempAddr);
+            tempAddr = llist_remove_head(fifo);
+            if (physical_mem[tempAddr].R){
+                physical_mem[tempAddr].R = 0; //Zera o bit de referência.
+                llist_add_tail(fifo, tempAddr); //Coloca o elemento novamente no final da fila.
             } else {
-                //realiza o swapout e o swapin
-                //return ou break.
+                swapout(physical_mem, *free_frame_stack, page_table, tempAddr);
+                swapin(physical_mem, free_frame_stack, page_table, page_id);
+                physical_mem[page_table[page_id].addr].R = 1;
+                return page_id;
             }
         }
     }
