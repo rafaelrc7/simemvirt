@@ -113,6 +113,8 @@ int main(int argc, char **argv)
 		}
 	}
 
+	fclose(handle);
+
 	free_frame_stack_destroy(free_frames_stack);
 	free(page_table);
 	free(physical_mem);

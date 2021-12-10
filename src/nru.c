@@ -23,12 +23,16 @@ uint32_t nru(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 
 				if (M && R) {
 					if (!c4) c4_addr = i;
+					c4 = 1;
 				} else if (!M && R) {
 					if (!c3) c3_addr = i;
+					c3 = 1;
 				} else if (M && !R) {
 					if (!c2) c2_addr = i;
+					c2 = 1;
 				} else {
 					if (!c1) c1_addr = i;
+					c1 = 1;
 					break;
 				}
 			}
