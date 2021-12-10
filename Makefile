@@ -4,7 +4,7 @@ TARGET = sim-virtual
 
 all: $(TARGET)
 
-sim-virtual: main.o mem-simu.o frame_stack.o nru.o second_chance.o lfu.o
+sim-virtual: main.o mem-simu.o frame_stack.o nru.o second_chance.o linked-list.o lfu.o
 
 CC = gcc
 CFLAGS  += -g -O0 -Wall -Wextra -pedantic
