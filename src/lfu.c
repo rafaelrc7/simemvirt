@@ -7,18 +7,25 @@
 #include "frame_stack.h"
 #include "lfu.h"
 
+int entrou = 0, entrou1 = 0, carregado = 0;
+
 uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack){
 
 	//uint32_t pag;
 	unsigned long int i = 0;
+	//int entrou, entrou1;
 	if(!page_table[page_id].is_loaded){
+		entrou++;
+		//printf("entrou no if %d\n", entrou);
 		if(*free_frame_stack){ //stack ainda tem espaço
-			swapin(physical_mem, free_frame_stack, page_table, page_id); //carrega
+			swapin(physical_mem, free_frame_stack, page_table, page_table[page_id].addr); //carrega
 			physical_mem[page_table[page_id].addr].A ++;
 			//pag = physical_mem[c1_addr].page_id;
 		}
 		else{
 			//procurar frame menos utilizado
+			entrou1++;
+			//printf("entrou no else %d\n", entrou1);
 			 unsigned long int menor = 1;
 			 int id_temp = 0;
 			for (i = 0; i < num_mem_frames; ++i){
@@ -29,16 +36,18 @@ uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 				}
 			}
 			//encontra o frame, e descarrega(swapout)
-			swapout(physical_mem, free_frame_stack, page_table, id_temp);
+			swapout(physical_mem, free_frame_stack, page_table, page_table[id_temp].addr);
 			physical_mem[id_temp].A = 0;
 
 			//carrega o proximo por cima (swapin)
-			swapin(physical_mem, free_frame_stack, page_table, page_id);
+			swapin(physical_mem, free_frame_stack, page_table, page_table[page_id].addr);
 
 		}
 	}
 	else{
 		//pag = physical_mem[c1_addr].page_id;
+		carregado++;
+		//printf("estava carregado %d\n", carregado);
 		physical_mem[page_table[page_id].addr].A ++; //apenas adiciona na frequencia
 	}
 
