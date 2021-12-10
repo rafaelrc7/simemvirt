@@ -9,11 +9,12 @@ typedef struct memory_frame Memory_frame;
 typedef struct memory_page Memory_page;
 
 struct memory_frame {
+	unsigned long int A;	/* num de acessos */
 	unsigned long int T;	/* ultimo acesso */
-	unsigned char R;		/* R bit */
-	unsigned char M;		/* Modified bit */
-	unsigned char P;		/* 1 se ter página referenciada */
-	uint32_t page_id;
+	unsigned char R;		/* indicador se página está referenciada */
+	unsigned char M;		/* indicador se página está suja */
+	unsigned char P;		/* 1 se ter página no frame */
+	uint32_t page_id;		/* id da página no frame */
 };
 
 struct memory_page {
