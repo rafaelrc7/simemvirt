@@ -19,24 +19,21 @@ uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 		}
 		else{
 			//procurar frame menos utilizado
-			 menor = 1;
+			 int menor = 1;
 			 int id_temp = 0;
-			for (i = 0; i < num_mem_frames; ++i){
-				
-				if(page_table[i].is_loaded && (physical_mem[i].M < menor)){//frame esta carregado e M < menor
-					menor = (int) R;
+			for (int i = 0; i < num_mem_frames; ++i){
+
+				if(page_table[i].is_loaded && (physical_mem[i].R < menor)){//frame esta carregado e M < menor
+					menor = (int) physical_mem[i].R;
 					id_temp = i;
-					
 				}
 			}
-			
 			//encontra o frame, e descarrega(swapout)
 			swapout(physical_mem, free_frame_stack, page_table, id_temp);
 			physical_mem[id_temp].R = 0;
-			
+
 			//carrega o proximo por cima (swapin)
 			swapin(physical_mem, free_frame_stack, page_table, page_id);
-			
 
 		}
 	}
@@ -44,8 +41,8 @@ uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 		//pag = physical_mem[c1_addr].page_id;
 		physical_mem[i].R ++; //apenas adiciona na frequencia
 	}
-	
-	
-	
+
+
+
 	return page_id;
 }
