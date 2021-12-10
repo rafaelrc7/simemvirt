@@ -113,6 +113,8 @@ int main(int argc, char **argv)
 		}
 	}
 
+	printf("Page faults: %u\nPage writes: %u\n", get_page_faults(), get_writes());
+
 	fclose(handle);
 
 	free_frame_stack_destroy(free_frames_stack);
