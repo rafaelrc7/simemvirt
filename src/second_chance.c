@@ -15,30 +15,31 @@ uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_fr
         fifo = llist_create();
     }
 
-    if (*free_frame_stack) //Memória ainda não está cheia
+    if (!page_table[page_id].is_loaded)
     {
-        llist_add_tail(fifo, page_id);
-        swapin(physical_mem, free_frame_stack, page_table, page_id);
-        return page_id;
-    } else if (page_table[page_id].is_loaded) //Página está na lista e carregada
-    {
-        uint32_t mem_addr = page_table[page_id].addr;
-        physical_mem[mem_addr].R = 1;
-        return page_id;
-    } else //Endereço deve ser adicionado à memória que está cheia
-    {
-        uint32_t tempAddr;
-        while(1) {
-            tempAddr = llist_remove_head(fifo);
-            if (physical_mem[tempAddr].R){
-                physical_mem[tempAddr].R = 0; //Zera o bit de referência.
-                llist_add_tail(fifo, tempAddr); //Coloca o elemento novamente no final da fila.
-            } else {
-                swapout(physical_mem, free_frame_stack, page_table, tempAddr);
-                swapin(physical_mem, free_frame_stack, page_table, page_id);
-                physical_mem[page_table[page_id].addr].R = 1;
-                return page_id;
+        if (*free_frame_stack) //Memória ainda não está cheia
+        {
+            llist_add_tail(fifo, page_id);
+            swapin(physical_mem, free_frame_stack, page_table, page_id);
+            return page_id;
+        } else //Endereço deve ser adicionado à memória que está cheia
+        {
+            uint32_t tempAddr;
+            while(1) {
+                tempAddr = llist_remove_head(fifo);
+                if (physical_mem[tempAddr].R){
+                    physical_mem[tempAddr].R = 0; //Zera o bit de referência.
+                    llist_add_tail(fifo, tempAddr); //Coloca o elemento novamente no final da fila.
+                } else {
+                    swapout(physical_mem, free_frame_stack, page_table, tempAddr);
+                    swapin(physical_mem, free_frame_stack, page_table, page_id);
+                    physical_mem[page_table[page_id].addr].R = 1;
+                    return page_id;
+                }
             }
         }
+    } else
+    {
+        physical_mem[page_table[page_id].addr].R = 1;
     }
 }

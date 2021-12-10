@@ -6,6 +6,8 @@
 
 #include "mem-simu.h"
 #include "nru.h"
+#include "second_chance.h"
+#include "lfu.h"
 
 #define ARCH (32)
 #define KB (1024)
@@ -15,7 +17,7 @@
 enum ALGORITHM { NRU = 0, FIFO2, LFU };
 
 static enum ALGORITHM curr_alg;
-static uint32_t (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack) = { &nru, NULL, NULL };
+static uint32_t (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack) = { &nru, &fifo_second_chance, &lfu };
 
 static unsigned long int time = 0;
 
