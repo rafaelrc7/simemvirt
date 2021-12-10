@@ -13,6 +13,7 @@ struct memory_frame {
 	unsigned char R;		/* R bit */
 	unsigned char M;		/* Modified bit */
 	unsigned char P;		/* 1 se ter página referenciada */
+	uint32_t page_id;
 };
 
 struct memory_page {

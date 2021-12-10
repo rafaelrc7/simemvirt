@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "mem-simu.h"
+#include "nru.h"
 
 #define ARCH (32)
 #define KB (1024)
@@ -14,7 +15,7 @@
 enum ALGORITHM { NRU = 0, FIFO2, LFU };
 
 static enum ALGORITHM curr_alg;
-static uint32_t (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, Free_frame **free_frame_stack);
+static uint32_t (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack) = { &nru, NULL, NULL };
 
 static unsigned long int time = 0;
 
@@ -96,7 +97,7 @@ int main(int argc, char **argv)
 		if (fscanf(handle, " %x %c", &addr, &op) == 2) {
 			uint32_t page_id = get_page_id(addr, page_id_offset);
 			if (op == 'R' || op == 'W') {
-				paging_algo[curr_alg](page_id, page_table, physical_mem, &free_frames_stack);
+				paging_algo[curr_alg](page_id, page_table, physical_mem, num_mem_frames, &free_frames_stack);
 				physical_mem[page_table[page_id].addr].T = time;
 
 				if (op == 'W') {

@@ -18,6 +18,7 @@ void swapin(Memory_frame *physical_mem, Free_frame **free_stack, Memory_page *pa
 
 	physical_mem[mem_addr].M = 0;
 	physical_mem[mem_addr].P = 1;
+	physical_mem[mem_addr].page_id = page_addr;
 
 	++page_faults;
 }
