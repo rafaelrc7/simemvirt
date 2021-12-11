@@ -17,7 +17,7 @@
 enum ALGORITHM { NRU = 0, FIFO2, LFU };
 
 static enum ALGORITHM curr_alg;
-static uint32_t (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack) = { &nru, &fifo_second_chance, &lfu };
+static void (*paging_algo[NUM_ALGS]) (uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack) = { &nru, &fifo_second_chance, &lfu };
 
 static unsigned long int time = 0;
 
@@ -92,6 +92,9 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
+	if (curr_alg == FIFO2)
+		second_chance_setup();
+
 	while (!feof(handle)) {
 		uint32_t addr;
 		char op;
@@ -118,6 +121,9 @@ int main(int argc, char **argv)
 	printf("Page faults: %u\nPage writes: %u\n", get_page_faults(), get_writes());
 
 	fclose(handle);
+
+	if (curr_alg == FIFO2)
+		second_chance_clean();
 
 	free_frame_stack_destroy(free_frames_stack);
 	free(page_table);

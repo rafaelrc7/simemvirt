@@ -8,7 +8,7 @@
 
 static long unsigned int turn = 0;
 
-uint32_t nru(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack)
+void nru(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack)
 {
 	unsigned int i;
 
@@ -58,7 +58,5 @@ uint32_t nru(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 		for (i = 0; i < num_mem_frames; ++i)
 			physical_mem[i].R = 0;
 	}
-
-	return page_id;
 }
 

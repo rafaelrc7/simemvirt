@@ -9,7 +9,7 @@
 
 int entrou = 0, entrou1 = 0, carregado = 0;
 
-uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack){
+void lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack){
 
 	//uint32_t pag;
 	unsigned long int i = 0;
@@ -50,8 +50,4 @@ uint32_t lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_m
 		//printf("estava carregado %d\n", carregado);
 		physical_mem[page_table[page_id].addr].A ++; //apenas adiciona na frequencia
 	}
-
-
-
-	return page_id;
 }
