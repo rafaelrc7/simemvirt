@@ -121,13 +121,17 @@ compilador.log
 
 ./sim-virtual FIFO2 compilador.log 8 16
 
+
 Page faults: 2207
+
 Page writes: 132
 
 
 ./sim-virtual FIFO2 compilador.log 32 16
 
+
 Page faults: 1356
+
 Page writes: 432
 
 
@@ -135,13 +139,17 @@ compressor.log
 
 ./sim-virtual FIFO2 compressor.log 8 16
 
+
 Page faults: 255
+
 Page writes: 0
 
 
 ./sim-virtual FIFO2 compressor.log 32 16
 
+
 Page faults: 172
+
 Page writes: 0
 
 
@@ -149,22 +157,33 @@ matriz.log
 
 ./sim-virtual FIFO2 matriz.log 8 16
 
+
 Page faults: 2144
+
 Page writes: 30
 
 
 ./sim-virtual FIFO2 matriz.log 32 16
+
+
 Page faults: 1509
+
 Page writes: 460
 
 
 simulador.log
 
 ./sim-virtual FIFO2 simulador.log 8 16
+
+
 Page faults: 2973
+
 Page writes: 694
 
 
 ./sim-virtual FIFO2 simulador.log 32 16
+
+
 Page faults: 2112
+
 Page writes: 1002
