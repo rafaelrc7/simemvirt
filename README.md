@@ -7,6 +7,28 @@ Segundo trabalho de INF1316
 - Pedro Piquet Fernandes de Sousa (2011040)
 - Paulo de Saldanha da Gama de Moura Vianna (2020704)
 
+## Descrição do código
+
+### Estrutura da dados
+#### Memória Física
+A memória física é representada por um array de structs do tipo frame. O struct guarda informações como os bits M e R (este tratado pelo algorítimo usado).
+
+#### Page Table
+A Page table é implementada como um array de structs de page, que guardam o endereço na memória física onde está carregada, se tiver carregada.
+
+### Módulos
+
+#### Algorítimos
+Existem 3 módulos que representam cada algorítimo, FIFO 2nd chance (second-chance.c), NRU (nru.c), LFU (lfu.c).
+
+#### Main
+O processamento dos argumentos e do arquivo acontecem na main. O arquivo é lido em loop até chegar ao seu fim.
+
+#### Linked List
+Para o FIFO 2nd chance foi implementado um simples módulo de linked list que é usado para implementar a fila.
+
+#### Mem-simu
+Este módulo implementa o swapin e swapout nas estruturas de dados que representam a memória.
 
 ## Execução dos códigos
 
