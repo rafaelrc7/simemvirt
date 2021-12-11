@@ -48,6 +48,8 @@ Page faults: 1785
 Page writes: 742
 ```
 
+O LFU demonstrou um aumento significativo no número de page writes, mas reduziu o número de faults, algo que não ocorreu nos outros algoritmos.
+
 #### compressor.log
 
 ```
@@ -61,6 +63,8 @@ Page writes: 0
 Page faults: 172
 Page writes: 0
 ```
+
+Desempenho idêntico aos outros algoritmos.
 
 
 #### matriz.log
@@ -113,6 +117,7 @@ page faults: 38601
 page writes: 620
 ```
 
+O NRU apresentou uma grande quantidade de page faults, quando aumentamos o tamanho das páginas, em relação ao outros dois algoritmos.
 
 #### compressor.log
 
@@ -128,6 +133,8 @@ Page writes: 0
 Page faults: 172
 Page writes: 0
 ```
+
+Desempenho idêntico aos outros algoritmos.
 
 
 #### matriz.log
@@ -181,6 +188,8 @@ Page faults: 3420
 Page writes: 837
 ```
 
+O FIFO Second Chance apresentou uma aumento significante de Page Writes quando aumentamos o tamanho das páginas.
+
 
 #### compressor.log
 
@@ -197,6 +206,7 @@ Page faults: 172
 Page writes: 0
 ```
 
+Desempenho idêntico aos outros algoritmos.
 
 #### matriz.log
 
