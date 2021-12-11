@@ -171,14 +171,14 @@ Page writes: 5812
 ```
 ./sim-virtual FIFO2 compilador.log 8 16
 
-Page faults: 2207
-Page writes: 132
+Page faults: 2392
+Page writes: 163
 
 
 ./sim-virtual FIFO2 compilador.log 32 16
 
-Page faults: 1356
-Page writes: 432
+Page faults: 3420
+Page writes: 837
 ```
 
 
@@ -203,14 +203,13 @@ Page writes: 0
 ```
 ./sim-virtual FIFO2 matriz.log 8 16
 
-Page faults: 2144
-Page writes: 30
-
+Page faults: 2214
+Page writes: 74
 
 ./sim-virtual FIFO2 matriz.log 32 16
 
-Page faults: 1509
-Page writes: 460
+Page faults: 1982
+Page writes: 651
 ```
 
 
@@ -219,13 +218,13 @@ Page writes: 460
 ```
 ./sim-virtual FIFO2 simulador.log 8 16
 
-Page faults: 2973
-Page writes: 694
+Page faults: 3436
+Page writes: 978
 
 
 ./sim-virtual FIFO2 simulador.log 32 16
 
-Page faults: 2112
-Page writes: 1002
+Page faults: 3067
+Page writes: 1402
 ```
 
