@@ -27,9 +27,11 @@ uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_fr
             uint32_t tempAddr;
             while(1) {
                 tempAddr = llist_remove_head(fifo);
-                if (physical_mem[tempAddr].R){
-                    physical_mem[tempAddr].R = 0; //Zera o bit de referência.
+                if (physical_mem[page_table[tempAddr].addr].R){
+                    physical_mem[page_table[tempAddr].addr].R = 0; //Zera o bit de referência.
                     llist_add_tail(fifo, tempAddr); //Coloca o elemento novamente no final da fila.
+                    printf("Tirou: %d ----- Colocou: %d\n", (int)tempAddr, (int)tempAddr);
+                    return page_id;
                 } else {
                     swapout(physical_mem, free_frame_stack, page_table, tempAddr);
                     swapin(physical_mem, free_frame_stack, page_table, page_id);
