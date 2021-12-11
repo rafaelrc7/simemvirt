@@ -7,6 +7,13 @@ Segundo trabalho de INF1316
 - Pedro Piquet Fernandes de Sousa (2011040)
 - Paulo de Saldanha da Gama de Moura Vianna (2020704)
 
+## Compilação
+De dentro da pasta raíz, onde o arquivo Makefile está:
+
+```sh
+make
+```
+
 ## Descrição do código
 
 ### Estrutura da dados
@@ -16,10 +23,17 @@ A memória física é representada por um array de structs do tipo frame. O stru
 #### Page Table
 A Page table é implementada como um array de structs de page, que guardam o endereço na memória física onde está carregada, se tiver carregada.
 
+#### Stack de frames livres
+Para facilitar a checagem se existe um bloco livre e quais blocos estão livres, usamos de uma stack onde podemos dar push e pop de blocos para rapidamente acessar o endereço de frames onde pode-se inserir uma página. Além disso é fácil checar se a memória está cheia apenas checando se a stakc está vazia.
+
 ### Módulos
 
 #### Algorítimos
 Existem 3 módulos que representam cada algorítimo, FIFO 2nd chance (second-chance.c), NRU (nru.c), LFU (lfu.c).
+
+O FIFO 2nd Chance usa da linked list para implementar a fila para retiro de páginas. Além disso usa-se o bit R da estrutura de dados da frame para o funcionamento do algorítimo.
+
+No NRU e LFU não se usa estruruas de dados especiais. Ambos os algorítimos usam os bits M e R da estrutura que representa o frame de memória além de um contador de acessos extra que o LFU usa.
 
 #### Main
 O processamento dos argumentos e do arquivo acontecem na main. O arquivo é lido em loop até chegar ao seu fim.
