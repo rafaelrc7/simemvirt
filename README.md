@@ -196,6 +196,7 @@ Page writes: 460
 
 #### simulador.log
 
+```
 ./sim-virtual FIFO2 simulador.log 8 16
 
 Page faults: 2973
@@ -206,3 +207,5 @@ Page writes: 694
 
 Page faults: 2112
 Page writes: 1002
+```
+
