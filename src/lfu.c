@@ -18,7 +18,7 @@ void lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, 
 		entrou++;
 		//printf("entrou no if %d\n", entrou);
 		if(*free_frame_stack){ //stack ainda tem espaço
-			swapin(physical_mem, free_frame_stack, page_table, page_table[page_id].addr); //carrega
+			swapin(physical_mem, free_frame_stack, page_table, page_id); //carrega
 			physical_mem[page_table[page_id].addr].A ++;
 			//pag = physical_mem[c1_addr].page_id;
 		}
@@ -36,11 +36,11 @@ void lfu(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, 
 				}
 			}
 			//encontra o frame, e descarrega(swapout)
-			swapout(physical_mem, free_frame_stack, page_table, page_table[id_temp].addr);
+			swapout(physical_mem, free_frame_stack, page_table, id_temp);
 			physical_mem[id_temp].A = 0;
 
 			//carrega o proximo por cima (swapin)
-			swapin(physical_mem, free_frame_stack, page_table, page_table[page_id].addr);
+			swapin(physical_mem, free_frame_stack, page_table, page_id);
 
 		}
 	}
