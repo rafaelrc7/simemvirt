@@ -103,6 +103,11 @@ int main(int argc, char **argv)
 			uint32_t page_id = get_page_id(addr, page_id_offset);
 			if (op == 'R' || op == 'W') {
 				paging_algo[curr_alg](page_id, page_table, physical_mem, num_mem_frames, &free_frames_stack);
+				if (!page_table[page_id].is_loaded) {
+					fprintf(stderr, "ACESSO INVALIDO\n");
+					fclose(handle);
+					exit(EXIT_FAILURE);
+				}
 				physical_mem[page_table[page_id].addr].T = time;
 
 				if (op == 'W') {

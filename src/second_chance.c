@@ -27,18 +27,16 @@ void fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame 
                 if (physical_mem[page_table[tempAddr].addr].R){
                     physical_mem[page_table[tempAddr].addr].R = 0; //Zera o bit de referência.
                     llist_add_tail(fifo, tempAddr); //Coloca o elemento novamente no final da fila.
-                    return;
                 } else {
                     swapout(physical_mem, free_frame_stack, page_table, tempAddr);
                     swapin(physical_mem, free_frame_stack, page_table, page_id);
                     physical_mem[page_table[page_id].addr].R = 1;
-                    llist_add_tail(fifo, page_id);  
+                    llist_add_tail(fifo, page_id);
                     return;
                 }
             }
         }
-    } else
-    {
+    } else {
         physical_mem[page_table[page_id].addr].R = 1;
     }
 }
@@ -52,3 +50,4 @@ void second_chance_clean()
 {
     llist_destroy(fifo);
 }
+

@@ -14,6 +14,7 @@ void nru(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, 
 
 	if (!page_table[page_id].is_loaded) {
 		if (!*free_frame_stack) {
+			/* Procurar páginas de cada categoria. */
 			uint8_t c1 = 0, c2 = 0, c3 = 0, c4 = 0;
 			uint32_t c1_addr, c2_addr, c3_addr, c4_addr, pag;
 
@@ -37,6 +38,7 @@ void nru(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, 
 				}
 			}
 
+			/* Remove a primeira página de uma das categorias achadas em ordem crescente */
 			if (c1)
 				pag = physical_mem[c1_addr].page_id;
 			else if (c2)
@@ -53,6 +55,7 @@ void nru(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, 
 		physical_mem[page_table[page_id].addr].R = 1;
 	}
 
+	/* Limpa o bit R de todas as páginas carregadas a cada período de tempo */
 	if (++turn == R_DUR) {
 		turn = 0;
 		for (i = 0; i < num_mem_frames; ++i)
