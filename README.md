@@ -12,7 +12,7 @@ Segundo trabalho de INF1316
 
 ### LFU
 
-compilador.log
+#### compilador.log
 
 ./sim-virtual LFU compilador.log 8 16
 
