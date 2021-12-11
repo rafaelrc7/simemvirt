@@ -7,7 +7,7 @@ struct free_frame_node {
 	Free_frame *next;	/* próximo nó */
 };
 
-Free_frame *free_frame_stack_create(unsigned long int num_mem_frames, unsigned long int page_size)
+Free_frame *free_frame_stack_create(unsigned long int num_mem_frames)
 {
 	unsigned long int i;
 	Free_frame *stack = NULL;

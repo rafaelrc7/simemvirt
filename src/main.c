@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	free_frames_stack = free_frame_stack_create(num_mem_frames, page_size);
+	free_frames_stack = free_frame_stack_create(num_mem_frames);
 
 	if (!(handle = fopen(file_name, "r"))) {
 		perror("fopen()");
