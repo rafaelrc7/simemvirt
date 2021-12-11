@@ -11,11 +11,6 @@ static List *fifo;
 
 void fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack)
 {
-    /*
-    if (!fifo){
-        fifo = llist_create();
-    }
-    */
 
     if (!page_table[page_id].is_loaded)
     {
