@@ -24,7 +24,7 @@ Page writes: 210
 Page faults: 1785
 Page writes: 742
 
-compressor.log
+#### compressor.log
 
 ./sim-virtual LFU compressor.log 8 16
 
@@ -37,7 +37,7 @@ Page faults: 172
 Page writes: 0
 
 
-matriz.log
+#### matriz.log
 
 ./sim-virtual LFU matriz.log 8 16
 
@@ -50,7 +50,7 @@ Page faults: 1811
 Page writes: 1055
 
 
-simulador.log
+#### simulador.log
 
 ./sim-virtual LFU simulador.log 8 16
 
@@ -68,7 +68,7 @@ Page writes: 1903
 ### NRU
 
 
-compilador.log
+#### compilador.log
 
 ./sim-virtual NRU compilador.log 8 16
 
@@ -82,7 +82,7 @@ page faults: 38601
 page writes: 620
 
 
-compressor.log
+#### compressor.log
 
 ./sim-virtual NRU compressor.log 8 16
 
@@ -96,7 +96,7 @@ Page faults: 172
 Page writes: 0
 
 
-matriz.log
+#### matriz.log
 
 ./sim-virtual NRU matriz.log 8 16
 
@@ -110,7 +110,7 @@ Page faults: 35558
 Page writes: 1613
 
 
-simulador.log
+#### simulador.log
 
 ./sim-virtual NRU simulador.log 8 16
 
@@ -127,7 +127,7 @@ Page writes: 5812
 ### FIFO2
 
 
-compilador.log
+#### compilador.log
 
 ./sim-virtual FIFO2 compilador.log 8 16
 
@@ -141,7 +141,7 @@ Page faults: 1356
 Page writes: 432
 
 
-compressor.log
+#### compressor.log
 
 ./sim-virtual FIFO2 compressor.log 8 16
 
@@ -155,7 +155,7 @@ Page faults: 172
 Page writes: 0
 
 
-matriz.log
+#### matriz.log
 
 ./sim-virtual FIFO2 matriz.log 8 16
 
@@ -169,7 +169,7 @@ Page faults: 1509
 Page writes: 460
 
 
-simulador.log
+#### simulador.log
 
 ./sim-virtual FIFO2 simulador.log 8 16
 
