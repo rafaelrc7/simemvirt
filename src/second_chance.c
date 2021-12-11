@@ -9,7 +9,7 @@
 
 static List *fifo;
 
-uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack)
+void fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_frame *physical_mem, size_t num_mem_frames, Free_frame **free_frame_stack)
 {
     if (!fifo){
         fifo = llist_create();
@@ -21,7 +21,7 @@ uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_fr
         {
             llist_add_tail(fifo, page_id);
             swapin(physical_mem, free_frame_stack, page_table, page_id);
-            return page_id;
+            return;
         } else //Endereço deve ser adicionado à memória que está cheia
         {
             uint32_t tempAddr;
@@ -30,14 +30,13 @@ uint32_t fifo_second_chance(uint32_t page_id, Memory_page *page_table, Memory_fr
                 if (physical_mem[page_table[tempAddr].addr].R){
                     physical_mem[page_table[tempAddr].addr].R = 0; //Zera o bit de referência.
                     llist_add_tail(fifo, tempAddr); //Coloca o elemento novamente no final da fila.
-                    printf("Tirou: %d ----- Colocou: %d\n", (int)tempAddr, (int)tempAddr);
-                    return page_id;
+                    return;
                 } else {
                     swapout(physical_mem, free_frame_stack, page_table, tempAddr);
                     swapin(physical_mem, free_frame_stack, page_table, page_id);
                     physical_mem[page_table[page_id].addr].R = 1;
                     llist_add_tail(fifo, page_id);  
-                    return page_id;
+                    return;
                 }
             }
         }
