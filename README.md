@@ -65,6 +65,7 @@ Page writes: 1903
 
 
 
+
 ### NRU
 
 
@@ -122,6 +123,8 @@ Page writes: 0
 
 Page faults: 59651
 Page writes: 5812
+
+
 
 
 ### FIFO2
